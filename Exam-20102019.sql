@@ -128,8 +128,45 @@ COUNT(r.CategoryId) AS ReportsNumber
 FROM Reports AS r
 JOIN Categories AS c
 ON r.CategoryId = c.Id
-GROUP BY r.CategoryId, c.[Name]
+GROUP BY r.CategoryId, c.[Name] 
+ORDER BY ReportsNumber DESC, CategoryName
+
+SELECT
+	c.[Name] AS CategoryName, 
+	COUNT(r.CategoryId) AS ReportsNumber
+FROM Reports AS r
+JOIN Categories AS c
+ON r.CategoryId = c.Id
+GROUP BY r.CategoryId, c.[Name] 
+ORDER BY ReportsNumber DESC, CategoryName
+
+SELECT
+	COUNT(c.[Name]) AS CategoryName, 
+	r.CategoryId AS ReportsNumber
+FROM Reports AS r
+JOIN Categories AS c
+ON r.CategoryId = c.Id
+GROUP BY r.CategoryId, c.[Name] 
+ORDER BY ReportsNumber DESC, CategoryName
 GO
 
+SELECT 
+	u.Username,
+	c.[Name] AS CategoryName
+FROM Reports AS r
+JOIN Users AS u
+ON r.UserId = u.Id
+JOIN Categories AS c
+ON c.Id = r.CategoryId
+WHERE DATEPART(DAY, r.OpenDate) = DATEPART(DAY, u.Birthdate)
+AND DATEPART(MONTH, r.OpenDate) = DATEPART(MONTH, u.Birthdate)
+ORDER BY u.Username, c.[Name]
+GO
 
-
+CREATE FUNCTION udf_HoursToComplete(@StartDate DATETIME, @EndDate DATETIME)
+RETURNS INT
+AS
+BEGIN
+	RETURN DATEDIFF(HOUR, @StartDate, @EndDate)
+END	
+GO
